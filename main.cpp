@@ -28,7 +28,10 @@ string pre_process(const string &source) {
 }
 
 void instructions_check(const string &instructions) {
-    set<char> valid_instructions = {'<', '>', ',', '.', '+', '-', '[', ']'};
+    set<char> valid_instructions = {
+            '<', '>', ',', '.', '+', '-', '[', ']',
+            ';', ':'
+    };
     stack<char> stk;
     for (const auto &ch: instructions) {
         if (valid_instructions.find(ch) == valid_instructions.end()) {
@@ -94,7 +97,7 @@ void show_runtime_stk(const char *stk, size_t stk_size = STACK_SIZE) {
 }
 
 int main(int argc, char *argv[]) {
-    const string instructions = pre_process(scan_source(argv[1])); // should be argv[1]
+    const string instructions = pre_process(scan_source(R"(G:\BrainFuck\tester\rw.bf)")); // should be argv[1]
     instructions_check(instructions);
 
     /*Pre-interpret*/
@@ -139,6 +142,13 @@ int main(int argc, char *argv[]) {
                 break;
             case ']':
                 position = *p != 0 ? rl_jmp_map[position] : position;
+                break;
+
+            case ';':
+                show_runtime_stk(runtime_stk);
+                break;
+            case ':':
+                cout << p - runtime_stk << flush;
                 break;
             default:
                 cerr << "Interpreter Error" << endl;
