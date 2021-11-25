@@ -97,7 +97,7 @@ void show_runtime_stk(const char *stk, size_t stk_size = STACK_SIZE) {
 }
 
 int main(int argc, char *argv[]) {
-    const string instructions = pre_process(scan_source(R"(G:\BrainFuck\tester\rw.bf)")); // should be argv[1]
+    const string instructions = pre_process(scan_source(argv[1])); // should be argv[1]
     instructions_check(instructions);
 
     /*Pre-interpret*/
