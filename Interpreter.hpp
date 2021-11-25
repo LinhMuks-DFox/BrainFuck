@@ -1,0 +1,8 @@
+//
+// Created by Mux on 2021/11/25.
+//
+
+#ifndef BRAINFUCK_INTERPRETER_HPP
+#define BRAINFUCK_INTERPRETER_HPP
+
+#endif //BRAINFUCK_INTERPRETER_HPP
