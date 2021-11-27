@@ -51,8 +51,8 @@ public:
     }
 
 public:
-    void show() const {
-        for (size_t i = 0; i < stk_size; ++i) {
+    void show(size_t end) const {
+        for (size_t i = 0; i < end; ++i) {
             if (i % 10 == 0 && i > 9)
                 cout << ",\n";
             cout << '[' << (int) stk[i] << "] " << flush;
@@ -110,7 +110,7 @@ private:
     static string lexical_check(const string &code) {
         set<char> valid_instructions = {
                 '<', '>', ',', '.', '+', '-', '[', ']',
-                ';', ':'
+                ';', ':', '%', '#'
         };
         stack<char> stk;
         for (const auto &ch: code) {
@@ -155,7 +155,7 @@ private:
     }
 
     void show_runtime_stk() {
-        stk->show();
+        stk->show(stk->stk_size);
     }
 
     [[maybe_unused]] void show_instructions() const noexcept {
@@ -211,11 +211,13 @@ public:
                     position = *p != 0 ? table->right_left[position] : position;
                     break;
                 case ';':
-                    show_runtime_stk();
+                    stk->show(stk->stk_size);
                     break;
                 case ':':
                     cout << p - runtime_stk << flush;
                     break;
+                case '%':
+                    stk->show(runtime_stk - p);
                 default:
                     cerr << "Interpreter Error" << endl;
                     return -1;
