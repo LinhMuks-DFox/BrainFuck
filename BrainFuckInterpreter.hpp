@@ -84,7 +84,7 @@ struct JumpTable {
     }
 };
 
-class Preprocessor {
+class Scanner {
 private:
     string path;
 private:
@@ -94,9 +94,28 @@ private:
             throw runtime_error("Can not open file: " + path);
         }
         stringstream ss;
-        ss << f_i.rdbuf();
+
+        while (f_i.good()) {
+            if ((char) f_i.peek() == '#') {
+                skip_doc(f_i);
+            }
+            char cur = (char) f_i.get();
+            if (cur == EOF) break;
+            ss << cur;
+        }
         return ss.str();
     };
+
+    static void skip_doc(std::ifstream &f) {
+        while (f.peek() >= 0) {
+            char c = (char) f.get();
+            if (c == EOF) break;
+            if (c == '#')
+                continue;
+            if (c == '\n' || c == '\r')
+                return;
+        }
+    }
 
     static string pre_process(const string &source) {
         stringstream ss;
@@ -135,7 +154,7 @@ private:
     }
 
 public:
-    explicit Preprocessor(const string &path) {
+    explicit Scanner(const string &path) {
         this->path = path;
     }
 
@@ -217,7 +236,8 @@ public:
                     cout << p - runtime_stk << flush;
                     break;
                 case '%':
-                    stk->show(runtime_stk - p);
+                    stk->show( p-runtime_stk);
+                    break;
                 default:
                     cerr << "Interpreter Error" << endl;
                     return -1;
@@ -230,7 +250,7 @@ public:
 
 struct Interpreter {
     int operator()(const string &path) {
-        Preprocessor preprocessor(R"(G:\BrainFuck\tester\rw.bf)");
+        Scanner preprocessor(path);
         Executor executor(preprocessor.process(), 300);
         return executor.execute();
 

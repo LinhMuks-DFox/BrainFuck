@@ -6,7 +6,7 @@ Copy Right: Mux, 2021
 '''
 
 import os
-
+import re
 __all__ = [
     "BrainFuckInterpreter"
 ]
@@ -49,8 +49,7 @@ class SourceScanner:
             source = f.read()
 
         # To skip comment, only allowed single line.
-
-
+        source = re.sub(r'(?m)^ *#.*\n?', '', source)
         self.processed_ = ""
         for index, char in enumerate(source):
             if char in IGNORE_CHARACTER:
@@ -138,6 +137,6 @@ class BrainFuckInterpreter:
 
 
 if __name__ == "__main__":
-    exit(BrainFuckInterpreter()(r"G:\BrainFuck\tester\rw.bf"))
+    exit(BrainFuckInterpreter()(sys.argv[1]))
 else:
     assert sys.version_info.minor >= 10, "Python version should greater than 3.10.0"
