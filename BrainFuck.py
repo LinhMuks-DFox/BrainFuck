@@ -26,12 +26,11 @@ SYNTAX = {
     '>': "Move the data pointer to point to the next cell to the right.",
     '[': "Jump to the next instruction of the matching ] if the current data pointer is pointing to 0",
     ']': "Jump to the next instruction of the matching [, if the data pointed to by the current data pointer is not 0",
-    # Non-standard functions, provided and implemented by Mux.
+    # Non-standard feature, provided and implemented by Mux.
     # For simplifying the debug process of brainfuck programs
     ';': "Display the entire run stack",
     ':': "Display the current position of the data pointer",
     '%': "Display the contents of the runtime stack from the start to the data pointer position",
-    # TODO: Implement Comment
     '#': "Comment"
 }
 
