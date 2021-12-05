@@ -3,4 +3,4 @@ project(BrainFuck)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(BrainFuck main.cpp)
+add_executable(BrainFuck main.cpp CommandLineParser.hpp)
