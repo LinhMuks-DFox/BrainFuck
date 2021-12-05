@@ -246,9 +246,9 @@ public:
 };
 
 struct Interpreter {
-    int operator()(const string &path) {
+    int operator()(const string &path, int stack_size = 300) {
         Scanner preprocessor(path);
-        Executor executor(preprocessor.process(), 300);
+        Executor executor(preprocessor.process(), stack_size);
         return executor.execute();
 
     }
