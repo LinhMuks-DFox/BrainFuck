@@ -97,7 +97,14 @@ private:
 
         while (f_i.good()) {
             if ((char) f_i.peek() == '#') {
-                skip_doc(f_i);
+                while (f_i.peek() >= 0) {
+                    char c = (char) f_i.get();
+                    if (c == EOF) break;
+                    if (c == '#')
+                        continue;
+                    if (c == '\n' || c == '\r')
+                        break;
+                }
             }
             char cur = (char) f_i.get();
             if (cur == EOF) break;
@@ -106,16 +113,6 @@ private:
         return ss.str();
     };
 
-    static void skip_doc(std::ifstream &f) {
-        while (f.peek() >= 0) {
-            char c = (char) f.get();
-            if (c == EOF) break;
-            if (c == '#')
-                continue;
-            if (c == '\n' || c == '\r')
-                return;
-        }
-    }
 
     static string pre_process(const string &source) {
         stringstream ss;
@@ -236,7 +233,7 @@ public:
                     cout << p - runtime_stk << flush;
                     break;
                 case '%':
-                    stk->show( p-runtime_stk);
+                    stk->show(p - runtime_stk);
                     break;
                 default:
                     cerr << "Interpreter Error" << endl;
