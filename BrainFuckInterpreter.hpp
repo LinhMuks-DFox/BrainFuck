@@ -50,6 +50,11 @@ public:
         delete[] stk;
     }
 
+    void reset_stack() {
+        delete[] p;
+        p = new char[stk_size];
+    }
+
 public:
     void show(size_t end) const {
         for (size_t i = 0; i < end; ++i) {
@@ -86,41 +91,42 @@ struct JumpTable {
 
 class Scanner {
 private:
-    string path;
-private:
-    string scan_code() {
+    static string read_fromfile(const string &path) {
         std::ifstream f_i(path, ios::in);
         if (!f_i.is_open()) {
             throw runtime_error("Can not open file: " + path);
         }
         stringstream ss;
-
-        while (f_i.good()) {
-            if ((char) f_i.peek() == '#') {
-                while (f_i.peek() >= 0) {
-                    char c = (char) f_i.get();
-                    if (c == EOF) break;
-                    if (c == '#')
-                        continue;
-                    if (c == '\n' || c == '\r')
-                        break;
-                }
-            }
-            char cur = (char) f_i.get();
-            if (cur == EOF) break;
-            ss << cur;
-        }
+        ss << f_i.rdbuf();
         return ss.str();
     };
 
-
     static string pre_process(const string &source) {
-        stringstream ss;
+        stringstream s_out, s_in(source);
         set<char> skips = {'\0', ' ', '\n', '\t'};
-        for (const auto &ch: source)
-            if (skips.find(ch) == skips.end())
-                ss << ch;
-        return ss.str();
+        auto is_skip_able = [&skips](char ch) -> bool {
+            return skips.find(ch) != skips.end();
+        };
+        while (s_in.good()) {
+            char cur = (char) s_in.get();
+            if (cur == EOF) break;
+            if (is_skip_able(cur)) {
+                continue;
+            }
+
+            if (cur == '#') {
+                while (s_in.peek() >= 0) {
+                    char c = (char) s_in.get();
+                    if (c == '\n' || c == '\r')
+                        break;
+                }
+
+                continue;
+            }
+
+            s_out << cur;
+        }
+        return s_out.str();
     };
 
     static string lexical_check(const string &code) {
@@ -151,13 +157,15 @@ private:
     }
 
 public:
-    explicit Scanner(const string &path) {
-        this->path = path;
+    static string scan_file(const string &file_path) {
+        return lexical_check(pre_process(read_fromfile(file_path)));
     }
 
-    string process() {
-        return lexical_check(pre_process(scan_code()));
+    static string scan_string(const string &source) {
+        return lexical_check(pre_process(source));
     }
+
+    Scanner() = default;
 };
 
 class Executor {
@@ -243,13 +251,18 @@ public:
         }
         return 0;
     }
+
+    void reset_runtime() {
+        table->right_left.clear();
+        table->left_right.clear();
+        stk->reset_stack();
+        this->instructions.clear();
+    }
 };
 
 struct Interpreter {
     int operator()(const string &path, int stack_size = 300) {
-        Scanner preprocessor(path);
-        Executor executor(preprocessor.process(), stack_size);
+        Executor executor(Scanner::scan_file(path), stack_size);
         return executor.execute();
-
     }
 };

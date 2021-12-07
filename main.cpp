@@ -1,22 +1,23 @@
 #include "BrainFuckInterpreter.hpp"
 #include "CommandLineParser.hpp"
 
-const static char* BF_INTERPRETER_VERSION = "1.0.1";
-const static char* COMPILER =
+const static char *BF_INTERPRETER_VERSION = "1.0.1";
+const static char *COMPILER =
 #ifdef __clang__
         "clang++";
 #else
         "g++";
 #endif
 
-
 int main(int argc, char *argv[]) {
     CommandLineParser parser(argc, argv);
     if (argc == 1) {
-        cout << "use brainfuck/bf -h/--help/-help to see help" << endl;
+        /* Todo:
+         * Actually, we want when no argument inputted, to launch command line bf-interactive command line interpreter
+         * */
+        cout << "use brainfuck --help to see how to use." << endl;
         return 0;
     }
-
     if (parser.cmd_option_exists("-h") ||
         parser.cmd_option_exists("--help") ||
         parser.cmd_option_exists("-help")) {
@@ -40,7 +41,6 @@ int main(int argc, char *argv[]) {
         cout << "'%': Display the contents of the runtime stack from the start to the data pointer position" << endl;
         return 0;
     }
-
     if (parser.cmd_option_exists("-v") || parser.cmd_option_exists("--version") ||
         parser.cmd_option_exists("-version")) {
         cout << "Mux BrainFuck Interpreter, CopyRight: Mux 2021" << '[' << COMPILER << "/std:" << __cplusplus << ']'
