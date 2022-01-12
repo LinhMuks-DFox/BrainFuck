@@ -55,6 +55,15 @@ public:
         p = new char[stk_size];
     }
 
+    void resize_stk(size_t new_size) {
+        char *_p = new char[new_size];
+        for (auto i = 0; i < stk_size; ++i) {
+            _p[i] = stk[i];
+        }
+        delete[] stk;
+        stk = _p;
+    }
+
 public:
     void show(size_t end) const {
         for (size_t i = 0; i < end; ++i) {
@@ -206,14 +215,17 @@ public:
             char ins = instructions[position];
             switch (ins) {
                 case '>':
-                    if (p == runtime_stk + this->stk->stk_size)
-                        throw overflow_error(
-                                "RuntimeError:can not move pc pointer anymore, pc pointer is out of stack.");
+                    if (p == runtime_stk + this->stk->stk_size) {
+                        cout << "RuntimeWarn:can not move pc pointer anymore, pc pointer is out of stack." << endl;
+                        cout << "\t\t RuntimeStk Resized, to:" << (stk->stk_size * 2) << endl;
+                        stk->resize_stk(stk->stk_size * 2);
+                        p = stk->p;
+                    }
                     p++;
                     break;
                 case '<':
                     if (p == runtime_stk)
-                        throw underflow_error("RuntimeError:pc pointer is now points to the top of rt stack.");
+                        cout << "RuntimeWarn:pc pointer is now points to the top of rt stack." << endl;
                     p--;
                     break;
                 case '+':
