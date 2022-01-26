@@ -7,6 +7,7 @@
 #include <exception>
 #include <map>
 #include <memory>
+#include <cstdlib>
 
 using namespace std;
 
@@ -51,15 +52,15 @@ public:
     }
 
     void reset_stack() {
-        delete[] p;
-        p = new char[stk_size];
+        delete[] this->stk;
+        stk = new char[stk_size];
+        p = stk;
     }
 
     void resize_stk(size_t new_size) {
+        if (new_size < stk_size) return;
         char *_p = new char[new_size];
-        for (auto i = 0; i < stk_size; ++i) {
-            _p[i] = stk[i];
-        }
+        memcpy(_p, stk, sizeof(char) * stk_size);
         delete[] stk;
         stk = _p;
     }
@@ -216,8 +217,11 @@ public:
             switch (ins) {
                 case '>':
                     if (p == runtime_stk + this->stk->stk_size) {
-                        cout << "RuntimeWarn:can not move pc pointer anymore, pc pointer is out of stack." << endl;
-                        cout << "\t\t RuntimeStk Resized, to:" << (stk->stk_size * 2) << endl;
+                        cout
+                                << "RuntimeWarn:can not move pc pointer anymore, pc pointer is out of stack."
+                                << endl;
+                        cout << "\t\t RuntimeStk Resized, to:"
+                             << (stk->stk_size * 2) << endl;
                         stk->resize_stk(stk->stk_size * 2);
                         p = stk->p;
                     }
@@ -225,7 +229,9 @@ public:
                     break;
                 case '<':
                     if (p == runtime_stk)
-                        cout << "RuntimeWarn:pc pointer is now points to the top of rt stack." << endl;
+                        cout
+                                << "RuntimeWarn:pc pointer is now points to the top of rt stack."
+                                << endl;
                     p--;
                     break;
                 case '+':

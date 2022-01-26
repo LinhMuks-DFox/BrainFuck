@@ -5,8 +5,12 @@ const static char *BF_INTERPRETER_VERSION = "1.0.1";
 const static char *COMPILER =
 #ifdef __clang__
         "clang++";
-#else
+#elif __GNUC__
         "g++";
+#elif _MSC_VER
+        "MSVC";
+#else
+    nullptr;
 #endif
 
 int main(int argc, char *argv[]) {
