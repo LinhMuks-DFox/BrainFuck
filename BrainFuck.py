@@ -5,6 +5,17 @@ Author: Mux
 Copy Right: Mux, 2021
 '''
 
+
+
+try:
+    import sys
+    if sys.version_info.major >= 10:
+        print("Python version should greater than 3.10")
+        exit(-1)
+except ImportError as ierr:
+    print("Python do not install correctly, reinstall it and run this again.")
+    exit(-1)
+
 import os
 import re
 __all__ = [
@@ -136,6 +147,8 @@ class BrainFuckInterpreter:
 
 
 if __name__ == "__main__":
-    exit(BrainFuckInterpreter()(sys.argv[1]))
-else:
-    assert sys.version_info.minor >= 10, "Python version should greater than 3.10.0"
+    try:
+        exit(BrainFuckInterpreter()(sys.argv[1]))
+    except IndexError as idxerr:
+        print("No file was inputted.")
+        print("usage: python BrainFuck.py [Brain Fuck Module].bf")
