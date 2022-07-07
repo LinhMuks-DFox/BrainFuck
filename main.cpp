@@ -54,7 +54,12 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     string path = parser.cmd_option_exists("-f") ? parser.get_cmd_option("-f") : "";
-    if (path.empty()) return 0;
+    if (path.empty()) {
+        cerr << "File path is empty." << endl;
+        cerr << "Use option -f to tell interpreter where is the script file." << endl;
+        cerr << "example: BrainFuck -f test.bf" << endl;
+        return 0;
+    }
     int stack_size = [&parser]() -> int {
         if (parser.cmd_option_exists("-s")) {
             stringstream ss(parser.get_cmd_option("-s"));
